@@ -19,7 +19,7 @@ jobs:
         java-version: 1.8
    
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew espressoExtensions:build
       
     - name: Unit Tests
-      run: ./gradlew test --continue
+      run: ./gradlew espressoExtensions:test --continue
