@@ -9,12 +9,19 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import org.hamcrest.Matcher
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+import java.security.InvalidParameterException
 
 @RunWith(JUnit4::class)
 class ViewInteractionExtensionsTest {
+
+    @Rule
+    @JvmField
+    var exceptionRule: ExpectedException = ExpectedException.none()
 
     @Test
     fun verifyMatcher_WithSuccess_ShouldCallCheckOneTime() {
@@ -54,6 +61,17 @@ class ViewInteractionExtensionsTest {
     }
 
     @Test
+    fun verifyMatcher_WithNegativeRetries_ShouldThrowInvalidParameterException() {
+        val viewInteraction = mockk<ViewInteraction>(relaxUnitFun = true, relaxed = true)
+        val matcher = mockk<Matcher<View>>()
+
+        exceptionRule.expect(InvalidParameterException::class.java)
+        exceptionRule.expectMessage("retryCount must be greater or equal to zero")
+
+        viewInteraction.verify(matcher, -1)
+    }
+
+    @Test
     fun verifyViewAssertion_WithSuccess_ShouldCallCheckOneTime() {
         val viewInteraction = mockk<ViewInteraction>(relaxUnitFun = true, relaxed = true)
         val viewAssertion = mockk<ViewAssertion>()
@@ -89,6 +107,17 @@ class ViewInteractionExtensionsTest {
     }
 
     @Test
+    fun verifyViewAssertion_WithNegativeRetries_ShouldThrowInvalidParameterException() {
+        val viewInteraction = mockk<ViewInteraction>(relaxUnitFun = true, relaxed = true)
+        val viewAssertion = mockk<ViewAssertion>()
+
+        exceptionRule.expect(InvalidParameterException::class.java)
+        exceptionRule.expectMessage("retryCount must be greater or equal to zero")
+
+        viewInteraction.verify(viewAssertion, -1)
+    }
+
+    @Test
     fun act_WithSuccess_ShouldCallCheckOneTime() {
         val viewInteraction = mockk<ViewInteraction>(relaxUnitFun = true, relaxed = true)
         val viewAction = mockk<ViewAction>()
@@ -109,5 +138,16 @@ class ViewInteractionExtensionsTest {
         viewInteraction.act(viewAction)
 
         verify { viewInteraction.viewActionFailureHandler(viewAction, 5) }
+    }
+
+    @Test
+    fun act_WithNegativeRetries_ShouldThrowInvalidParameterException() {
+        val viewInteraction = mockk<ViewInteraction>(relaxUnitFun = true, relaxed = true)
+        val viewAction = mockk<ViewAction>()
+
+        exceptionRule.expect(InvalidParameterException::class.java)
+        exceptionRule.expectMessage("retryCount must be greater or equal to zero")
+
+        viewInteraction.act(viewAction, -1)
     }
 }

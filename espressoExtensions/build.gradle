@@ -2,20 +2,44 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+ext {
+    libraryVersion = '1.0.0'
+
+    bintrayRepo = "EspressoExtensions"
+    bintrayName = "com.rjpsoft.espressoExtensions"
+
+    libraryName = 'espressoExtensions'
+
+    publishedGroupId = 'com.rjpsoft.espressoExtensions'
+    artifact = 'espressoExtensions'
+
+    libraryDescription = ''
+    siteUrl = 'https://github.com/jpedretti/espressoExtensions'
+    gitUrl = 'https://github.com/jpedretti/espressoExtensions.git'
+
+    def file = project.rootProject.file('local.properties')
+    bintrayUser = System.getenv('BINTRAY_USER')
+    bintrayApiKey = System.getenv('BINTRAY_API_KEY')
+    if (file.exists()) {
+        Properties properties = new Properties()
+        properties.load(file.newDataInputStream())
+        bintrayUser = properties.getProperty('bintrayUser', '')
+        bintrayApiKey = properties.getProperty('bintrayApiKey', '')
+    }
+}
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
